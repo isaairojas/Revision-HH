@@ -182,19 +182,20 @@ function abrirDetalleProducto(idx) {
   const art = PEDIDO.articulos[idx];
   articuloActualIdx = idx;
 
-  document.getElementById('det-codigo').textContent    = art.sku;
-  document.getElementById('det-nombre').textContent    = art.nombre;
+  document.getElementById('det-codigo').textContent         = art.sku;
+  document.getElementById('det-nombre').textContent         = art.nombre;
   document.getElementById('det-solicitado-val').textContent = art.cantPedido;
+  // Piezas surtidas siempre visible para todos los productos
+  document.getElementById('det-section-solicitado').classList.remove('hidden');
 
   const secCantidad  = document.getElementById('det-section-cantidad');
   const footerNormal = document.getElementById('det-footer-normal');
   const footerMisc   = document.getElementById('det-footer-misc');
 
   if (art.esMiscelaneo) {
-    // Stepper arranca en cantPedido (cantidad surtida)
-    const valorInicial = art.cantPedido;
-    document.getElementById('det-cantidad-val-btn').textContent = valorInicial;
-    document.getElementById('det-btn-cantidad').textContent     = valorInicial;
+    // Stepper siempre arranca en cantPedido (cantidad surtida)
+    document.getElementById('det-cantidad-val-btn').textContent = art.cantPedido;
+    document.getElementById('det-btn-cantidad').textContent     = art.cantPedido;
     secCantidad.classList.remove('hidden');
     footerNormal.classList.add('hidden');
     footerMisc.classList.remove('hidden');
@@ -302,12 +303,10 @@ function actualizarStats() {
   const total = PEDIDO.articulos.length;
   const revisados = completado + negado;
   const pct = total > 0 ? Math.round(revisados / total * 100) : 0;
-  const barEl   = document.getElementById('avance-progress-bar');
-  const labelEl = document.getElementById('avance-revisados-label');
-  const pctEl   = document.getElementById('avance-pct-label');
-  if (barEl)   barEl.style.width = pct + '%';
-  if (labelEl) labelEl.textContent = revisados + ' de ' + total + ' revisados';
-  if (pctEl)   pctEl.textContent   = pct + '%';
+  const barEl = document.getElementById('avance-progress-bar');
+  const pctEl = document.getElementById('avance-pct-label');
+  if (barEl) barEl.style.width = pct + '%';
+  if (pctEl) pctEl.textContent = pct + '%';
 }
 
 /* ============================================================
