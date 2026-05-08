@@ -265,63 +265,43 @@
           </div>
         </div>
 
-        <!-- Ubicación / Pasillo / Torre / Nivel -->
-        <div class="detalle-grid-2">
-          <div class="detalle-field-pill">
-            <span class="detalle-pill-label">Ubicación</span>
-            <span class="detalle-pill-value red" id="det-ubicacion">N/A</span>
-          </div>
-          <div class="detalle-field-pill">
-            <span class="detalle-pill-label">Pasillo</span>
-            <span class="detalle-pill-value red" id="det-pasillo">N/A</span>
-          </div>
-          <div class="detalle-field-pill">
-            <span class="detalle-pill-label">Torre</span>
-            <span class="detalle-pill-value red" id="det-torre">N/A</span>
-          </div>
-          <div class="detalle-field-pill">
-            <span class="detalle-pill-label">Nivel</span>
-            <span class="detalle-pill-value red" id="det-nivel">N/A</span>
-          </div>
-        </div>
-
-        <!-- Existencia / Solicitado -->
-        <div class="detalle-grid-2">
-          <div class="detalle-field-pill">
-            <span class="detalle-pill-label">Existencia</span>
-            <span class="detalle-pill-value" id="det-existencia">100</span>
-          </div>
-          <div class="detalle-field-pill">
-            <span class="detalle-pill-label">Solicitado</span>
-            <span class="detalle-pill-value" id="det-solicitado">3</span>
-          </div>
-        </div>
-
-        <!-- Cantidad revisada: bloqueada para normales, editable para misceláneos -->
-        <div class="detalle-cantidad-row">
-          <span class="detalle-cantidad-label">Cantidad revisada:</span>
-
-          <!-- Versión BLOQUEADA (productos normales) -->
-          <div id="det-cant-bloqueada" class="det-cant-bloqueada-wrap">
-            <div class="det-cant-bloqueada-pill">
-              <span id="det-cantidad-display">0</span>
+        <!-- Cantidad misceláneos: stepper editable (solo visible para misc) -->
+        <div id="det-section-cantidad" class="hidden">
+          <div class="detalle-cantidad-row">
+            <span class="detalle-cantidad-label">Cantidad revisada:</span>
+            <div id="det-cant-editable" class="detalle-stepper">
+              <button class="stepper-btn minus" onclick="stepperCambiar(-1)">−</button>
+              <button class="stepper-val-btn" id="det-cantidad-val-btn" onclick="abrirModalCantidad()">0</button>
+              <button class="stepper-btn plus" onclick="stepperCambiar(1)">+</button>
             </div>
           </div>
-
-          <!-- Versión EDITABLE con stepper (misceláneos) -->
-          <div id="det-cant-editable" class="detalle-stepper hidden">
-            <button class="stepper-btn minus" onclick="stepperCambiar(-1)">−</button>
-            <button class="stepper-val-btn" id="det-cantidad-val-btn" onclick="abrirModalCantidad()">0</button>
-            <button class="stepper-btn plus" onclick="stepperCambiar(1)">+</button>
-          </div>
         </div>
+
+        <!-- campos ocultos mantenidos para compatibilidad con js existente -->
+        <span id="det-ubicacion" style="display:none"></span>
+        <span id="det-pasillo"   style="display:none"></span>
+        <span id="det-torre"     style="display:none"></span>
+        <span id="det-nivel"     style="display:none"></span>
+        <span id="det-existencia" style="display:none"></span>
+        <span id="det-solicitado" style="display:none"></span>
+        <div id="det-cant-bloqueada" style="display:none"><span id="det-cantidad-display"></span></div>
 
         <div style="height:100px"></div>
       </div>
 
-      <!-- Botón Regresar (único en detalle) -->
-      <div class="footer-actions footer-single">
-        <button class="btn-detalle-regresar btn-full" onclick="guardarYRegresar()">Regresar</button>
+      <!-- Footer producto normal: solo Regresar -->
+      <div class="footer-actions footer-single" id="det-footer-normal">
+        <button class="btn-detalle-regresar btn-full" onclick="goTo('screen-revision')">Regresar</button>
+      </div>
+
+      <!-- Footer misceláneos: Cancelar + Confirmar -->
+      <div class="footer-actions hidden" id="det-footer-misc">
+        <button class="btn-cancel" onclick="goTo('screen-revision')">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="white"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+        <button class="btn-confirm" onclick="guardarYRegresar()">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="white"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+        </button>
       </div>
     </div>
 

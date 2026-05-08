@@ -182,33 +182,22 @@ function abrirDetalleProducto(idx) {
   const art = PEDIDO.articulos[idx];
   articuloActualIdx = idx;
 
-  document.getElementById('det-codigo').textContent     = art.sku;
-  document.getElementById('det-nombre').textContent     = art.nombre;
-  document.getElementById('det-ubicacion').textContent  = art.ubicacion;
-  document.getElementById('det-pasillo').textContent    = art.pasillo;
-  document.getElementById('det-torre').textContent      = art.torre;
-  document.getElementById('det-nivel').textContent      = art.nivel;
-  document.getElementById('det-existencia').textContent = art.existencia;
-  document.getElementById('det-solicitado').textContent = art.cantPedido;
+  document.getElementById('det-codigo').textContent = art.sku;
+  document.getElementById('det-nombre').textContent = art.nombre;
 
-  // Colorear N/A en rojo
-  ['det-ubicacion','det-pasillo','det-torre','det-nivel'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el.textContent === 'N/A') el.classList.add('red');
-    else el.classList.remove('red');
-  });
-
-  const bloqueada = document.getElementById('det-cant-bloqueada');
-  const editable  = document.getElementById('det-cant-editable');
+  const secCantidad   = document.getElementById('det-section-cantidad');
+  const footerNormal  = document.getElementById('det-footer-normal');
+  const footerMisc    = document.getElementById('det-footer-misc');
 
   if (art.esMiscelaneo) {
-    bloqueada.classList.add('hidden');
-    editable.classList.remove('hidden');
+    secCantidad.classList.remove('hidden');
     document.getElementById('det-cantidad-val-btn').textContent = art.cantRevisada;
+    footerNormal.classList.add('hidden');
+    footerMisc.classList.remove('hidden');
   } else {
-    editable.classList.add('hidden');
-    bloqueada.classList.remove('hidden');
-    document.getElementById('det-cantidad-display').textContent = art.cantRevisada;
+    secCantidad.classList.add('hidden');
+    footerNormal.classList.remove('hidden');
+    footerMisc.classList.add('hidden');
   }
 
   goTo('screen-detalle');
