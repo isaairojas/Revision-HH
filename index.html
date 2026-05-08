@@ -151,36 +151,20 @@
               </div>
             </div>
           </div>
-          <div class="avance-stats">
-            <div class="stat-item">
-              <span class="stat-label">Revisadas</span>
-              <div class="stat-icon icon-completado">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14l-4-4 1.41-1.41L10 13.17l6.59-6.59L18 8l-8 8z"/></svg>
-              </div>
-              <span class="stat-count" id="stat-completado">0</span>
+          <div class="avance-progress-wrap">
+            <div class="avance-progress-labels">
+              <span id="avance-revisados-label">0 de 6 revisados</span>
+              <span id="avance-pct-label">0%</span>
             </div>
-            <div class="stat-item">
-              <span class="stat-label">Negadas</span>
-              <div class="stat-icon icon-negado">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z"/></svg>
-              </div>
-              <span class="stat-count" id="stat-negado">0</span>
-            </div>
-            <div class="stat-item">
-              <span class="stat-label">Parcial</span>
-              <div class="stat-icon icon-parcial">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"/><path d="M12 4v8l4 2-1 1.73-5-2.73V4z" fill="white"/></svg>
-              </div>
-              <span class="stat-count" id="stat-parcial">0</span>
-            </div>
-            <div class="stat-item">
-              <span class="stat-label">Pendientes</span>
-              <div class="stat-icon icon-pendiente">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
-              </div>
-              <span class="stat-count" id="stat-pendiente">6</span>
+            <div class="avance-progress-track">
+              <div class="avance-progress-bar" id="avance-progress-bar" style="width:0%"></div>
             </div>
           </div>
+          <!-- contadores ocultos usados internamente -->
+          <span id="stat-completado" style="display:none">0</span>
+          <span id="stat-negado"     style="display:none">0</span>
+          <span id="stat-parcial"    style="display:none">0</span>
+          <span id="stat-pendiente"  style="display:none">6</span>
         </div>
 
         <!-- Tabla de artículos -->
@@ -268,7 +252,7 @@
         <!-- Cantidad surtida (todos los productos) -->
         <div id="det-section-solicitado">
           <div class="detalle-field-pill">
-            <span class="detalle-pill-label">Cantidad surtida</span>
+            <span class="detalle-pill-label">Piezas surtidas</span>
             <span class="detalle-pill-value" id="det-solicitado-val">0</span>
           </div>
         </div>

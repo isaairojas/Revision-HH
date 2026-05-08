@@ -297,6 +297,17 @@ function actualizarStats() {
   setEl('stat-negado',     negado);
   setEl('stat-parcial',    parcial);
   setEl('stat-pendiente',  pendiente);
+
+  // Barra de progreso porcentual
+  const total = PEDIDO.articulos.length;
+  const revisados = completado + negado;
+  const pct = total > 0 ? Math.round(revisados / total * 100) : 0;
+  const barEl   = document.getElementById('avance-progress-bar');
+  const labelEl = document.getElementById('avance-revisados-label');
+  const pctEl   = document.getElementById('avance-pct-label');
+  if (barEl)   barEl.style.width = pct + '%';
+  if (labelEl) labelEl.textContent = revisados + ' de ' + total + ' revisados';
+  if (pctEl)   pctEl.textContent   = pct + '%';
 }
 
 /* ============================================================

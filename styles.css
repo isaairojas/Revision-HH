@@ -466,42 +466,40 @@ html, body {
   border-bottom: 6px solid #1a1a2e;
 }
 
-/* Stats de avance */
-.avance-stats {
-  display: flex;
-  padding: 10px 8px;
-  justify-content: space-around;
+/* Barra de progreso porcentual */
+.avance-progress-wrap {
+  padding: 12px 16px 14px;
   background: #fff;
 }
-.stat-item {
+.avance-progress-labels {
   display: flex;
-  flex-direction: column;
+  justify-content: space-between;
   align-items: center;
-  gap: 4px;
+  margin-bottom: 8px;
 }
-.stat-label {
-  font-size: 11px;
-  color: #555;
+.avance-progress-labels span:first-child {
+  font-size: 13px;
+  color: #444;
   font-weight: 500;
 }
-.stat-icon {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.avance-progress-labels span:last-child {
+  font-size: 15px;
+  font-weight: 800;
+  color: #1B3892;
 }
-.icon-completado { background: #2e7d32; }
-.icon-negado     { background: #e53935; }
-.icon-parcial    { background: #1565c0; }
-.icon-pendiente  { background: #f9a825; }
-.stat-count {
-  font-size: 16px;
-  font-weight: 700;
-  color: #1a1a2e;
+.avance-progress-track {
+  width: 100%;
+  height: 12px;
+  background: #e0e0e0;
+  border-radius: 999px;
+  overflow: hidden;
 }
-.stat-pending { color: #1a1a2e; }
+.avance-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #1B3892 0%, #27a85a 100%);
+  border-radius: 999px;
+  transition: width 0.4s ease;
+}
 
 /* Lista de artículos */
 .articulos-list {
