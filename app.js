@@ -66,10 +66,10 @@ function procesarScanRevision(valor) {
     return;
   }
 
-  // Artículo misceláneo: abrir modal de cantidad manual
+  // Artículo misceláneo: no abrir modal, indicar al usuario que use el detalle
   if (art.esMiscelaneo) {
-    if (input) { input.value = ''; }
-    abrirBsCantidad(codigoProducto);
+    if (input) { input.value = ''; setTimeout(() => input.focus(), 50); }
+    showToast('warning', 'Misceláneo detectado', 'Para registrar la cantidad de "' + art.nombre + '" hazlo desde el detalle del producto.');
     return;
   }
 
@@ -182,24 +182,23 @@ function abrirDetalleProducto(idx) {
   const art = PEDIDO.articulos[idx];
   articuloActualIdx = idx;
 
-  document.getElementById('det-codigo').textContent = art.sku;
-  document.getElementById('det-nombre').textContent = art.nombre;
+  document.getElementById('det-codigo').textContent    = art.sku;
+  document.getElementById('det-nombre').textContent    = art.nombre;
+  document.getElementById('det-solicitado-val').textContent = art.cantPedido;
 
-  const secSolicitado = document.getElementById('det-section-solicitado');
-  const secCantidad   = document.getElementById('det-section-cantidad');
-  const footerNormal  = document.getElementById('det-footer-normal');
-  const footerMisc    = document.getElementById('det-footer-misc');
+  const secCantidad  = document.getElementById('det-section-cantidad');
+  const footerNormal = document.getElementById('det-footer-normal');
+  const footerMisc   = document.getElementById('det-footer-misc');
 
   if (art.esMiscelaneo) {
-    secSolicitado.classList.add('hidden');
+    // Stepper arranca en cantPedido (cantidad surtida)
+    const valorInicial = art.cantPedido;
+    document.getElementById('det-cantidad-val-btn').textContent = valorInicial;
+    document.getElementById('det-btn-cantidad').textContent     = valorInicial;
     secCantidad.classList.remove('hidden');
-    document.getElementById('det-cantidad-val-btn').textContent = art.cantRevisada;
     footerNormal.classList.add('hidden');
     footerMisc.classList.remove('hidden');
   } else {
-    secSolicitado.classList.remove('hidden');
-    document.getElementById('det-solicitado-val').textContent = art.cantPedido;
-    document.getElementById('det-btn-cantidad').textContent   = art.cantPedido;
     secCantidad.classList.add('hidden');
     footerNormal.classList.remove('hidden');
     footerMisc.classList.add('hidden');
@@ -216,10 +215,13 @@ function stepperCambiar(delta) {
   let val = parseInt(btn.textContent) || 0;
   val = Math.max(0, val + delta);
   btn.textContent = val;
+  // Actualizar texto del botón verde
+  const btnCant = document.getElementById('det-btn-cantidad');
+  if (btnCant) btnCant.textContent = val;
   if (articuloActualIdx >= 0) {
     const art = PEDIDO.articulos[articuloActualIdx];
     art.cantRevisada = val;
-    art.estado = val >= art.cantPedido ? 'completo' : (val > 0 ? 'parcial' : 'pendiente');
+    art.estado = val > art.cantPedido ? 'sobrante' : (val === art.cantPedido ? 'completo' : (val > 0 ? 'parcial' : 'pendiente'));
   }
 }
 
@@ -250,8 +252,11 @@ function confirmarModalCantidad() {
   if (articuloActualIdx >= 0) {
     const art = PEDIDO.articulos[articuloActualIdx];
     art.cantRevisada = val;
-    art.estado = val >= art.cantPedido ? 'completo' : (val > 0 ? 'parcial' : 'pendiente');
+    art.estado = val > art.cantPedido ? 'sobrante' : (val === art.cantPedido ? 'completo' : (val > 0 ? 'parcial' : 'pendiente'));
     document.getElementById('det-cantidad-val-btn').textContent = val;
+    // Actualizar botón verde
+    const btnCant = document.getElementById('det-btn-cantidad');
+    if (btnCant) btnCant.textContent = val;
   }
   cerrarModalCantidadBtn();
 }
