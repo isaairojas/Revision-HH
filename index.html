@@ -265,7 +265,15 @@
           </div>
         </div>
 
-        <!-- Cantidad misceláneos: stepper editable (solo visible para misc) -->
+        <!-- Solicitado (solo productos normales) -->
+        <div id="det-section-solicitado" class="hidden">
+          <div class="detalle-field-pill">
+            <span class="detalle-pill-label">Solicitado</span>
+            <span class="detalle-pill-value" id="det-solicitado-val">0</span>
+          </div>
+        </div>
+
+        <!-- Cantidad misceláneos: stepper editable -->
         <div id="det-section-cantidad" class="hidden">
           <div class="detalle-cantidad-row">
             <span class="detalle-cantidad-label">Cantidad revisada:</span>
@@ -277,11 +285,11 @@
           </div>
         </div>
 
-        <!-- campos ocultos mantenidos para compatibilidad con js existente -->
-        <span id="det-ubicacion" style="display:none"></span>
-        <span id="det-pasillo"   style="display:none"></span>
-        <span id="det-torre"     style="display:none"></span>
-        <span id="det-nivel"     style="display:none"></span>
+        <!-- campos ocultos para compatibilidad -->
+        <span id="det-ubicacion"  style="display:none"></span>
+        <span id="det-pasillo"    style="display:none"></span>
+        <span id="det-torre"      style="display:none"></span>
+        <span id="det-nivel"      style="display:none"></span>
         <span id="det-existencia" style="display:none"></span>
         <span id="det-solicitado" style="display:none"></span>
         <div id="det-cant-bloqueada" style="display:none"><span id="det-cantidad-display"></span></div>
@@ -289,9 +297,11 @@
         <div style="height:100px"></div>
       </div>
 
-      <!-- Footer producto normal: solo Regresar -->
+      <!-- Footer producto normal: Revisar producto con cantidad -->
       <div class="footer-actions footer-single" id="det-footer-normal">
-        <button class="btn-detalle-regresar btn-full" onclick="goTo('screen-revision')">Regresar</button>
+        <button class="btn-revisar-producto btn-full" id="btn-revisar-producto" onclick="goTo('screen-revision')">
+          Revisar producto &nbsp;·&nbsp; <span id="det-btn-cantidad">0</span> pzas
+        </button>
       </div>
 
       <!-- Footer misceláneos: Cancelar + Confirmar -->

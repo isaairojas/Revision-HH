@@ -185,16 +185,21 @@ function abrirDetalleProducto(idx) {
   document.getElementById('det-codigo').textContent = art.sku;
   document.getElementById('det-nombre').textContent = art.nombre;
 
+  const secSolicitado = document.getElementById('det-section-solicitado');
   const secCantidad   = document.getElementById('det-section-cantidad');
   const footerNormal  = document.getElementById('det-footer-normal');
   const footerMisc    = document.getElementById('det-footer-misc');
 
   if (art.esMiscelaneo) {
+    secSolicitado.classList.add('hidden');
     secCantidad.classList.remove('hidden');
     document.getElementById('det-cantidad-val-btn').textContent = art.cantRevisada;
     footerNormal.classList.add('hidden');
     footerMisc.classList.remove('hidden');
   } else {
+    secSolicitado.classList.remove('hidden');
+    document.getElementById('det-solicitado-val').textContent = art.cantPedido;
+    document.getElementById('det-btn-cantidad').textContent   = art.cantPedido;
     secCantidad.classList.add('hidden');
     footerNormal.classList.remove('hidden');
     footerMisc.classList.add('hidden');
