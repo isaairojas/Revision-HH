@@ -1637,27 +1637,25 @@ html, body {
   margin: 0 0 16px;
 }
 
-/* Fila superior: imagen + código/nombre */
+/* Sección superior: imagen arriba, código/nombre abajo */
 .detalle-top-row {
   display: flex;
+  flex-direction: column;
   gap: 12px;
   margin-bottom: 14px;
-  align-items: flex-start;
 }
 .detalle-img-box {
-  width: 140px;
-  min-width: 140px;
-  height: 140px;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  max-height: 220px;
   border: 1.5px solid #c5cae9;
-  border-radius: 12px;
+  border-radius: 14px;
   display: flex;
   align-items: center;
   justify-content: center;
   background: #f5f5f5;
-  flex-shrink: 0;
 }
 .detalle-codigo-nombre {
-  flex: 1;
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -1666,11 +1664,10 @@ html, body {
   border: 1.5px solid #1B3892;
   border-radius: 8px;
   padding: 10px 12px;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
   color: #1a1a2e;
   line-height: 1.4;
-  min-height: 58px;
 }
 
 /* Pills de campos (Código, Ubicación, etc.) */
