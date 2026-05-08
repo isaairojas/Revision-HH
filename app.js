@@ -26,11 +26,33 @@ let totalDiscrepancias = 0;
 /* ============================================================
    AUDIO
    ============================================================ */
+let _audioUnlocked = false;
+
+function _unlockAudio() {
+  if (_audioUnlocked) return;
+  _audioUnlocked = true;
+  ['audio-ok', 'audio-error'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) { el.play().then(() => { el.pause(); el.currentTime = 0; }).catch(() => {}); }
+  });
+}
+
+// Desbloquear en cualquier interacción (toque, click o tecla del scanner)
+['touchstart', 'mousedown', 'keydown'].forEach(ev =>
+  document.addEventListener(ev, _unlockAudio, { once: false, passive: true })
+);
+
 function playAudio(id) {
   const el = document.getElementById(id);
   if (!el) return;
-  el.currentTime = 0;
-  el.play().catch(() => {});
+  // Clonar el nodo permite reproducir antes de que el anterior termine
+  const clone = el.cloneNode(true);
+  clone.volume = 1;
+  clone.play().catch(() => {
+    // Fallback: intentar reproducir el original
+    el.currentTime = 0;
+    el.play().catch(() => {});
+  });
 }
 
 /* ============================================================
