@@ -100,6 +100,7 @@ function procesarScanRevision(valor) {
 
   // Artículo misceláneo: indicar al usuario que use el detalle
   if (art.esMiscelaneo) {
+    playAudio('audio-error');
     if (input) { input.value = ''; setTimeout(() => input.focus(), 50); }
     showToast('warning', 'Misceláneo detectado', 'Para registrar la cantidad de "' + art.nombre + '" hazlo desde el detalle del producto.');
     return;
@@ -110,7 +111,6 @@ function procesarScanRevision(valor) {
   if (art.cantRevisada > art.cantPedido) {
     art.estado = 'sobrante';
     const exceso = art.cantRevisada - art.cantPedido;
-    playAudio('audio-error');
     showToast('warning', 'Sobrante detectado', 'Artículo ' + codigoProducto + ': ' + art.cantRevisada + ' escaneados, pedido requiere ' + art.cantPedido + ' (sobrante: +' + exceso + ').');
   } else if (art.cantRevisada === art.cantPedido) {
     art.estado = 'completo';
@@ -199,7 +199,7 @@ function renderTablaArticulos() {
     let badgeText = art.cantRevisada + ' de ' + art.cantPedido;
     if (art.estado === 'negado')   { badgeClass = 'badge-rev negado';   badgeText = 'Negado'; }
     else if (art.estado === 'completo') { badgeClass = 'badge-rev completo'; }
-    else if (art.estado === 'sobrante') { badgeClass = 'badge-rev sobrante'; badgeText = art.cantRevisada + ' de ' + art.cantPedido + ' (+' + (art.cantRevisada - art.cantPedido) + ')'; }
+    else if (art.estado === 'sobrante') { badgeClass = 'badge-rev sobrante'; }
     tdRev.innerHTML = '<span class="' + badgeClass + '">' + badgeText + '</span>';
 
     tr.appendChild(tdImg);
@@ -540,9 +540,9 @@ function crearTarjetaFaltante(art) {
       </div>
     </div>
     <div class="disc-accion-faltante">
-      <span class="disc-accion-label">Selecciona el motivo del faltante:</span>
+      <span class="disc-accion-label">Indicar motivo de negado:</span>
       <div class="motivos-grid">
-        <button class="btn-motivo" onclick="seleccionarMotivo(this,'${id}','falta')">Falta de inventario</button>
+        <button class="btn-motivo" onclick="seleccionarMotivo(this,'${id}','negar')">Negar mercancía</button>
         <button class="btn-motivo btn-motivo-otro" onclick="seleccionarMotivoOtro(this,'${id}')">Otro</button>
       </div>
       <div class="motivo-nota-wrap hidden" id="nota-wrap-${id}">
