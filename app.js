@@ -73,10 +73,13 @@ function procesarScanRevision(valor) {
     return;
   }
 
-  // Sumar cantidad escaneada
+  // Sumar cantidad escaneada (sin tope — permite sobrante)
   art.cantRevisada += cantidadEtiqueta;
-  if (art.cantRevisada >= art.cantPedido) {
-    art.cantRevisada = art.cantPedido;
+  if (art.cantRevisada > art.cantPedido) {
+    art.estado = 'sobrante';
+    const exceso = art.cantRevisada - art.cantPedido;
+    showToast('warning', 'Sobrante detectado', 'Artículo ' + codigoProducto + ': ' + art.cantRevisada + ' escaneados, pedido requiere ' + art.cantPedido + ' (sobrante: +' + exceso + ').');
+  } else if (art.cantRevisada === art.cantPedido) {
     art.estado = 'completo';
     showToast('success', 'Acción realizada', 'Artículo ' + codigoProducto + ' completado (' + art.cantRevisada + '/' + art.cantPedido + ').');
   } else {
@@ -84,7 +87,7 @@ function procesarScanRevision(valor) {
     showToast('warning', 'Alerta importante', 'Artículo ' + codigoProducto + ': ' + art.cantRevisada + ' de ' + art.cantPedido + ' revisados.');
   }
 
-  if (input) { input.value = ''; }
+  if (input) { input.value = ''; setTimeout(() => input.focus(), 50); }
   renderTablaArticulos();
   actualizarStats();
 }
@@ -130,6 +133,7 @@ function goTo(screenId) {
   if (screenId === 'screen-revision') {
     renderTablaArticulos();
     actualizarStats();
+    setTimeout(() => { const inp = document.getElementById('scanner-revision'); if (inp) inp.focus(); }, 150);
   }
 }
 
@@ -160,6 +164,7 @@ function renderTablaArticulos() {
     let badgeText = art.cantRevisada + ' de ' + art.cantPedido;
     if (art.estado === 'negado')   { badgeClass = 'badge-rev negado';   badgeText = 'Negado'; }
     else if (art.estado === 'completo') { badgeClass = 'badge-rev completo'; }
+    else if (art.estado === 'sobrante') { badgeClass = 'badge-rev sobrante'; badgeText = art.cantRevisada + ' de ' + art.cantPedido + ' (+' + (art.cantRevisada - art.cantPedido) + ')'; }
     tdRev.innerHTML = '<span class="' + badgeClass + '">' + badgeText + '</span>';
 
     tr.appendChild(tdImg);
@@ -283,7 +288,7 @@ function guardarYRegresar() {
 function actualizarStats() {
   let completado = 0, negado = 0, parcial = 0, pendiente = 0;
   PEDIDO.articulos.forEach(a => {
-    if (a.estado === 'completo')     completado++;
+    if (a.estado === 'completo' || a.estado === 'sobrante') completado++;
     else if (a.estado === 'negado')  negado++;
     else if (a.estado === 'parcial') parcial++;
     else                             pendiente++;
@@ -749,4 +754,21 @@ function showToast(type, title, msg) {
 document.addEventListener('DOMContentLoaded', () => {
   goTo('screen-menu');
   actualizarStats();
+
+  // Mantener foco en el campo de escaneo cuando está en pantalla de revisión
+  const scanInput = document.getElementById('scanner-revision');
+  if (scanInput) {
+    scanInput.addEventListener('blur', () => {
+      const screenRevision = document.getElementById('screen-revision');
+      if (!screenRevision || !screenRevision.classList.contains('active')) return;
+      const modalesAbiertos =
+        !document.getElementById('bs-cantidad').classList.contains('hidden') ||
+        !document.getElementById('modal-cantidad').classList.contains('hidden') ||
+        !document.getElementById('bs-opciones').classList.contains('hidden') ||
+        !document.getElementById('modal-sin-disc').classList.contains('hidden');
+      if (!modalesAbiertos) {
+        setTimeout(() => scanInput.focus(), 80);
+      }
+    });
+  }
 });

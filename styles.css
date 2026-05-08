@@ -1618,6 +1618,11 @@ html, body {
   color: #721c24;
   border-color: #dc3545;
 }
+.badge-rev.sobrante {
+  background: #fff0cc;
+  color: #7a4f00;
+  border-color: #f0a500;
+}
 
 /* ============================================================
    DETALLE DEL PRODUCTO
