@@ -24,6 +24,16 @@ let discResueltasCount = 0;
 let totalDiscrepancias = 0;
 
 /* ============================================================
+   AUDIO
+   ============================================================ */
+function playAudio(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.currentTime = 0;
+  el.play().catch(() => {});
+}
+
+/* ============================================================
    ESCANEO EN PANTALLA DE REVISIÓN (etiqueta 18 dígitos)
    Estructura: Producto(1-7) | Cantidad(8-13) | Peso(14-18)
    ============================================================ */
@@ -54,19 +64,19 @@ function procesarScanRevision(valor) {
 
   // Código ajeno al pedido
   if (!art) {
-    // Registrar como producto ajeno
     const existeAjeno = productosAjenos.find(p => p.sku === codigoProducto);
     if (existeAjeno) {
       existeAjeno.cantidad += cantidadEtiqueta;
     } else {
       productosAjenos.push({ sku: codigoProducto, cantidad: cantidadEtiqueta, nombre: 'PRODUCTO AJENO AL PEDIDO' });
     }
+    playAudio('audio-error');
     showToast('error', 'Se produjo un error', 'El código ' + codigoProducto + ' no corresponde a ningún artículo de este pedido.');
-    if (input) { input.value = ''; }
+    if (input) { input.value = ''; setTimeout(() => input.focus(), 50); }
     return;
   }
 
-  // Artículo misceláneo: no abrir modal, indicar al usuario que use el detalle
+  // Artículo misceláneo: indicar al usuario que use el detalle
   if (art.esMiscelaneo) {
     if (input) { input.value = ''; setTimeout(() => input.focus(), 50); }
     showToast('warning', 'Misceláneo detectado', 'Para registrar la cantidad de "' + art.nombre + '" hazlo desde el detalle del producto.');
@@ -78,12 +88,15 @@ function procesarScanRevision(valor) {
   if (art.cantRevisada > art.cantPedido) {
     art.estado = 'sobrante';
     const exceso = art.cantRevisada - art.cantPedido;
+    playAudio('audio-error');
     showToast('warning', 'Sobrante detectado', 'Artículo ' + codigoProducto + ': ' + art.cantRevisada + ' escaneados, pedido requiere ' + art.cantPedido + ' (sobrante: +' + exceso + ').');
   } else if (art.cantRevisada === art.cantPedido) {
     art.estado = 'completo';
+    playAudio('audio-ok');
     showToast('success', 'Acción realizada', 'Artículo ' + codigoProducto + ' completado (' + art.cantRevisada + '/' + art.cantPedido + ').');
   } else {
     art.estado = 'parcial';
+    playAudio('audio-ok');
     showToast('warning', 'Alerta importante', 'Artículo ' + codigoProducto + ': ' + art.cantRevisada + ' de ' + art.cantPedido + ' revisados.');
   }
 

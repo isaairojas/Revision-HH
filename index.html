@@ -289,9 +289,9 @@
           <svg width="28" height="28" viewBox="0 0 24 24" fill="white"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
         </button>
         <button class="btn-revisar-producto" id="btn-revisar-producto" onclick="guardarYRegresar()">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
-          Revisar &nbsp;<span id="det-btn-cantidad">0</span>&nbsp;pzas
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="white"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
         </button>
+        <span id="det-btn-cantidad" style="display:none">0</span>
       </div>
     </div>
 
@@ -588,6 +588,8 @@
 
   </div><!-- /device-frame -->
 
+  <audio id="audio-ok"    src="beep-ok.mp3"    preload="auto"></audio>
+  <audio id="audio-error" src="beep-error.mp3" preload="auto"></audio>
   <script src="app.js"></script>
 </body>
 </html>
