@@ -161,7 +161,7 @@
           <span id="stat-completado" style="display:none">0</span>
           <span id="stat-negado"     style="display:none">0</span>
           <span id="stat-parcial"    style="display:none">0</span>
-          <span id="stat-pendiente"  style="display:none">6</span>
+          <span id="stat-pendiente"  style="display:none">7</span>
         </div>
 
         <!-- Tabla de artículos -->
@@ -234,8 +234,9 @@
 
         <!-- Imagen + Código + Nombre -->
         <div class="detalle-top-row">
-          <div class="detalle-img-box">
-            <svg width="80" height="80" viewBox="0 0 24 24" fill="#c5cae9"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>
+          <div class="detalle-img-box" id="det-img-box">
+            <img id="det-img" src="" alt="" style="width:100%;height:100%;object-fit:contain;border-radius:12px;display:none" />
+            <svg id="det-img-placeholder" width="80" height="80" viewBox="0 0 24 24" fill="#c5cae9"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>
           </div>
           <div class="detalle-codigo-nombre">
             <div class="detalle-field-pill">

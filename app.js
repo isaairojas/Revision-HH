@@ -4,12 +4,13 @@
 const PEDIDO = {
   id: '123456',
   articulos: [
-    { sku: '0486600', nombre: 'FILTRO DE ACEITE PREMIUM', cantPedido: 31, cantRevisada: 0, estado: 'pendiente', ubicacion: 'Planta Baja', pasillo: 'Pasillo 18', torre: 'Torre 4', nivel: 'Nivel 1', existencia: 120, esMiscelaneo: false },
-    { sku: '1365800', nombre: 'BUJIA NGK ESTANDAR', cantPedido: 7, cantRevisada: 0, estado: 'pendiente', ubicacion: 'Planta Baja', pasillo: 'Pasillo 18', torre: 'Torre 5', nivel: 'Nivel 1', existencia: 45, esMiscelaneo: false },
-    { sku: '1394001', nombre: 'CINTA AISLANTE AMARILLO 20 PIES PLASTICA IMPORTADO 20 U/L', cantPedido: 10, cantRevisada: 0, estado: 'pendiente', ubicacion: 'Planta Baja', pasillo: 'Pasillo 18', torre: 'Torre 5', nivel: 'Nivel 1', existencia: 100, esMiscelaneo: false },
-    { sku: '2389475', nombre: 'PASTILLA DE FRENO TRASERA', cantPedido: 8, cantRevisada: 0, estado: 'pendiente', ubicacion: 'Planta Baja', pasillo: 'Pasillo 18', torre: 'Torre 4', nivel: 'Nivel 2', existencia: 60, esMiscelaneo: false },
-    { sku: '9182736', nombre: 'ACEITE MOTOR 5W-30 SINTETICO', cantPedido: 9, cantRevisada: 0, estado: 'pendiente', ubicacion: 'Planta Baja', pasillo: 'Pasillo 18', torre: 'Torre 5', nivel: 'Nivel 1', existencia: 200, esMiscelaneo: false },
-    { sku: '3847561', nombre: 'MISCELANEOS / VARIOS', cantPedido: 15, cantRevisada: 0, estado: 'pendiente', ubicacion: 'N/A', pasillo: 'N/A', torre: 'N/A', nivel: 'N/A', existencia: 999, esMiscelaneo: true }
+    { sku: '0245130', nombre: 'AGUA PARA BATERIA 500 REIDEN R-AG',                                    cantPedido: 24, cantRevisada: 0, estado: 'pendiente', ubicacion: 'Planta Baja', pasillo: 'Pasillo 3',  torre: 'Torre 1', nivel: 'Nivel 2', existencia: 80,  esMiscelaneo: false },
+    { sku: '1390004', nombre: 'CINCHO GRANDE 14 PULGADAS (NEGRO)',                                     cantPedido: 50, cantRevisada: 0, estado: 'pendiente', ubicacion: 'Planta Baja', pasillo: 'Pasillo 7',  torre: 'Torre 2', nivel: 'Nivel 1', existencia: 200, esMiscelaneo: false },
+    { sku: '1620000', nombre: 'ENCENDEDOR AUTOMOTRIZ 12 VOLTIOS COMPLETO SIN LUZ DYNAMIC EN',          cantPedido: 12, cantRevisada: 0, estado: 'pendiente', ubicacion: 'Planta Baja', pasillo: 'Pasillo 5',  torre: 'Torre 3', nivel: 'Nivel 2', existencia: 35,  esMiscelaneo: false },
+    { sku: '1964000', nombre: 'FOCO HALOGENO H4/9003 TRANSPARENTE 12V 100/90 1 P43',                   cantPedido: 8,  cantRevisada: 0, estado: 'pendiente', ubicacion: 'Planta Baja', pasillo: 'Pasillo 12', torre: 'Torre 4', nivel: 'Nivel 1', existencia: 60,  esMiscelaneo: false },
+    { sku: '2612000', nombre: 'INTERRUPTOR PALANCA METALICO UN PASO ARROW CON CABLE',                  cantPedido: 5,  cantRevisada: 0, estado: 'pendiente', ubicacion: 'Planta Baja', pasillo: 'Pasillo 9',  torre: 'Torre 2', nivel: 'Nivel 3', existencia: 45,  esMiscelaneo: false },
+    { sku: '2655000', nombre: 'LIMPIADOR CARBURADOR Y CUERPO DE ACELERACION EN AEROSOL',               cantPedido: 10, cantRevisada: 0, estado: 'pendiente', ubicacion: 'Planta Baja', pasillo: 'Pasillo 4',  torre: 'Torre 5', nivel: 'Nivel 1', existencia: 90,  esMiscelaneo: false },
+    { sku: '4105000', nombre: 'TERMINAL INSTALACION REDONDA ZINC ROJO 5/32 IMPORTADO R-5/32"',         cantPedido: 30, cantRevisada: 0, estado: 'pendiente', ubicacion: 'N/A',          pasillo: 'N/A',        torre: 'N/A',     nivel: 'N/A',     existencia: 999, esMiscelaneo: true  }
   ]
 };
 
@@ -184,7 +185,7 @@ function renderTablaArticulos() {
     tr.onclick = () => abrirDetalleProducto(idx);
 
     const tdImg = document.createElement('td');
-    tdImg.innerHTML = '<div class="td-img-cell"><svg width="22" height="22" viewBox="0 0 24 24" fill="#c5cae9"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg></div>';
+    tdImg.innerHTML = '<div class="td-img-cell"><img src="assets/' + art.sku + '.jpg" width="36" height="36" style="object-fit:contain;border-radius:4px" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'block\'" /><svg style="display:none" width="22" height="22" viewBox="0 0 24 24" fill="#c5cae9"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg></div>';
 
     const tdSku = document.createElement('td');
     tdSku.className = 'td-sku';
@@ -220,8 +221,20 @@ function abrirDetalleProducto(idx) {
   document.getElementById('det-codigo').textContent         = art.sku;
   document.getElementById('det-nombre').textContent         = art.nombre;
   document.getElementById('det-solicitado-val').textContent = art.cantPedido;
-  // Piezas surtidas siempre visible para todos los productos
   document.getElementById('det-section-solicitado').classList.remove('hidden');
+
+  // Imagen del producto
+  const detImg = document.getElementById('det-img');
+  const detPlaceholder = document.getElementById('det-img-placeholder');
+  if (detImg && detPlaceholder) {
+    detImg.src = 'assets/' + art.sku + '.jpg';
+    detImg.style.display = 'block';
+    detPlaceholder.style.display = 'none';
+    detImg.onerror = () => {
+      detImg.style.display = 'none';
+      detPlaceholder.style.display = 'block';
+    };
+  }
 
   const secCantidad  = document.getElementById('det-section-cantidad');
   const footerNormal = document.getElementById('det-footer-normal');
