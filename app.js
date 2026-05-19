@@ -640,6 +640,10 @@ function crearTarjetaFaltante(art) {
     </div>
     <div class="disc-cantidades-row">
       <div class="disc-cant-item">
+        <span class="disc-cant-label">Solicitado</span>
+        <span class="disc-cant-val">${art.cantPedido}</span>
+      </div>
+      <div class="disc-cant-item">
         <span class="disc-cant-label">Surtido</span>
         <span class="disc-cant-val">${art.cantPedido}</span>
       </div>
@@ -720,6 +724,10 @@ function crearTarjetaSobrante(art) {
       </div>
     </div>
     <div class="disc-cantidades-row">
+      <div class="disc-cant-item">
+        <span class="disc-cant-label">Solicitado</span>
+        <span class="disc-cant-val">${art.cantPedido}</span>
+      </div>
       <div class="disc-cant-item">
         <span class="disc-cant-label">Surtido</span>
         <span class="disc-cant-val">${art.cantPedido}</span>
