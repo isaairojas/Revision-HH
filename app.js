@@ -8,7 +8,7 @@ const PEDIDO = {
     { sku: '2546000', nombre: 'INTERRUPTOR LLAVE 11 TIPO UNIVERSAL CAMIONES 60-79 POLLAK 31',          cantPedido:  5, cantRevisada: 0, estado: 'pendiente', ubicacion: 'Planta Baja', pasillo: 'Pasillo 2',  torre: 'Torre 1', nivel: 'Nivel 2', existencia: 50,  esMiscelaneo: false },
     { sku: '3658201', nombre: 'SOLENOIDE MARCHA DELCO 29MT 12V (10515838) BRASIL',                     cantPedido:  2, cantRevisada: 0, estado: 'pendiente', ubicacion: 'Planta Baja', pasillo: 'Pasillo 3',  torre: 'Torre 2', nivel: 'Nivel 1', existencia: 20,  esMiscelaneo: false },
     { sku: '1964000', nombre: 'FOCO HALOGENO H4/9003 TRANSPARENTE 12V 100/90 1 P43',                   cantPedido:  2, cantRevisada: 0, estado: 'pendiente', ubicacion: 'Planta Baja', pasillo: 'Pasillo 12', torre: 'Torre 4', nivel: 'Nivel 1', existencia: 60,  esMiscelaneo: false },
-    { sku: '2655000', nombre: 'LIMPIADOR CARBURADOR Y CUERPO DE ACELERACION EN AEROSOL',               cantPedido:  1, cantRevisada: 0, estado: 'pendiente', ubicacion: 'Planta Baja', pasillo: 'Pasillo 4',  torre: 'Torre 5', nivel: 'Nivel 1', existencia: 90,  esMiscelaneo: false },
+    { sku: '2655000', nombre: 'LIMPIADOR CARBURADOR Y CUERPO DE ACELERACION EN AEROSOL',               cantPedido:  1, cantRevisada: 0, estado: 'pendiente', ubicacion: 'Planta Baja', pasillo: 'Pasillo 4',  torre: 'Torre 5', nivel: 'Nivel 1', existencia: 90,  esMiscelaneo: true  },
     { sku: '4105000', nombre: 'TERMINAL INSTALACION REDONDA ZINC ROJO 5/32 IMPORTADO R-5/32"',         cantPedido:  2, cantRevisada: 0, estado: 'pendiente', ubicacion: 'N/A',          pasillo: 'N/A',        torre: 'N/A',     nivel: 'N/A',     existencia: 999, esMiscelaneo: true  }
   ]
 };
@@ -24,35 +24,61 @@ let discResueltasCount = 0;
 let totalDiscrepancias = 0;
 
 /* ============================================================
-   AUDIO
+   AUDIO — Web Audio API (confiable en Android/Chrome + Zebra HID)
    ============================================================ */
-let _audioUnlocked = false;
+let _audioCtx    = null;
+const _audioBufs = {};   // { ok: AudioBuffer, error: AudioBuffer }
+let _audioReady  = false;
 
-function _unlockAudio() {
-  if (_audioUnlocked) return;
-  _audioUnlocked = true;
-  ['audio-ok', 'audio-error'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) { el.play().then(() => { el.pause(); el.currentTime = 0; }).catch(() => {}); }
-  });
+async function _cargarAudio() {
+  try {
+    _audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const archivos = { ok: 'beep-ok.mp3', error: 'beep-error.mp3' };
+    for (const [key, src] of Object.entries(archivos)) {
+      const resp         = await fetch(src);
+      const arrayBuf     = await resp.arrayBuffer();
+      _audioBufs[key]    = await _audioCtx.decodeAudioData(arrayBuf);
+    }
+    _audioReady = true;
+  } catch (e) {
+    console.warn('[Audio] Web Audio API no disponible, usando fallback HTML:', e);
+  }
 }
 
-// Desbloquear en cualquier interacción (toque, click o tecla del scanner)
+function _resumirContexto() {
+  if (!_audioCtx) {
+    // Primera interacción: crear contexto y cargar buffers
+    _cargarAudio();
+    return;
+  }
+  if (_audioCtx.state === 'suspended') {
+    _audioCtx.resume();
+  }
+}
+
+// Desbloquear en cualquier interacción, incluyendo teclas HID del scanner
 ['touchstart', 'mousedown', 'keydown'].forEach(ev =>
-  document.addEventListener(ev, _unlockAudio, { once: false, passive: true })
+  document.addEventListener(ev, _resumirContexto, { passive: true })
 );
 
 function playAudio(id) {
+  const key = id.replace('audio-', ''); // 'ok' | 'error'
+
+  // --- Web Audio API (preferido) ---
+  if (_audioReady && _audioCtx && _audioBufs[key]) {
+    if (_audioCtx.state === 'suspended') _audioCtx.resume();
+    const src = _audioCtx.createBufferSource();
+    src.buffer = _audioBufs[key];
+    src.connect(_audioCtx.destination);
+    src.start(0);
+    return;
+  }
+
+  // --- Fallback: elemento <audio> HTML ---
   const el = document.getElementById(id);
   if (!el) return;
-  // Clonar el nodo permite reproducir antes de que el anterior termine
-  const clone = el.cloneNode(true);
-  clone.volume = 1;
-  clone.play().catch(() => {
-    // Fallback: intentar reproducir el original
-    el.currentTime = 0;
-    el.play().catch(() => {});
-  });
+  el.currentTime = 0;
+  el.play().catch(() => {});
 }
 
 /* ============================================================
@@ -589,7 +615,7 @@ function crearTarjetaFaltante(art) {
     <div class="disc-accion-faltante">
       <span class="disc-accion-label">Indicar motivo de negado:</span>
       <div class="motivos-grid">
-        <button class="btn-motivo" onclick="seleccionarMotivo(this,'${id}','negar')">Negar mercancía</button>
+        <button class="btn-motivo" onclick="seleccionarMotivo(this,'${id}','negar')">Negar por falta de existencia</button>
         <button class="btn-motivo btn-motivo-otro" onclick="seleccionarMotivoOtro(this,'${id}')">Otro</button>
       </div>
       <div class="motivo-nota-wrap hidden" id="nota-wrap-${id}">
