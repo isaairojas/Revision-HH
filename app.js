@@ -33,11 +33,12 @@ let _audioReady  = false;
 async function _cargarAudio() {
   try {
     _audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    // El contexto arranca suspended — se reanuda con el primer gesto del usuario
     const archivos = { ok: 'beep-ok.mp3', error: 'beep-error.mp3' };
     for (const [key, src] of Object.entries(archivos)) {
-      const resp         = await fetch(src);
-      const arrayBuf     = await resp.arrayBuffer();
-      _audioBufs[key]    = await _audioCtx.decodeAudioData(arrayBuf);
+      const resp      = await fetch(src);
+      const arrayBuf  = await resp.arrayBuffer();
+      _audioBufs[key] = await _audioCtx.decodeAudioData(arrayBuf);
     }
     _audioReady = true;
   } catch (e) {
@@ -45,18 +46,17 @@ async function _cargarAudio() {
   }
 }
 
+// Iniciar carga de buffers al arrancar — listo antes del primer scan
+document.addEventListener('DOMContentLoaded', () => _cargarAudio());
+
 function _resumirContexto() {
-  if (!_audioCtx) {
-    // Primera interacción: crear contexto y cargar buffers
-    _cargarAudio();
-    return;
-  }
-  if (_audioCtx.state === 'suspended') {
+  // Reanudar contexto suspendido con cualquier gesto (toque, click o tecla HID)
+  if (_audioCtx && _audioCtx.state === 'suspended') {
     _audioCtx.resume();
   }
 }
 
-// Desbloquear en cualquier interacción, incluyendo teclas HID del scanner
+// Capturar gestos del usuario para desbloquear el contexto de audio
 ['touchstart', 'mousedown', 'keydown'].forEach(ev =>
   document.addEventListener(ev, _resumirContexto, { passive: true })
 );
@@ -175,6 +175,7 @@ function procesarScanRevision(valor) {
   art.cantRevisada += cantidadEtiqueta;
   if (art.cantRevisada > art.cantPedido) {
     art.estado = 'sobrante';
+    playAudio('audio-error');
   } else if (art.cantRevisada === art.cantPedido) {
     art.estado = 'completo';
     playAudio('audio-ok');
