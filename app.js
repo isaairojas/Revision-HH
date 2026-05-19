@@ -66,11 +66,18 @@ function playAudio(id) {
 
   // --- Web Audio API (preferido) ---
   if (_audioReady && _audioCtx && _audioBufs[key]) {
-    if (_audioCtx.state === 'suspended') _audioCtx.resume();
-    const src = _audioCtx.createBufferSource();
-    src.buffer = _audioBufs[key];
-    src.connect(_audioCtx.destination);
-    src.start(0);
+    const _disparar = () => {
+      const src = _audioCtx.createBufferSource();
+      src.buffer = _audioBufs[key];
+      src.connect(_audioCtx.destination);
+      src.start(0);
+    };
+    // resume() es async — esperar antes de disparar el sonido
+    if (_audioCtx.state === 'suspended') {
+      _audioCtx.resume().then(_disparar).catch(() => {});
+    } else {
+      _disparar();
+    }
     return;
   }
 
