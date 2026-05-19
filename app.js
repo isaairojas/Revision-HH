@@ -114,6 +114,7 @@ function procesarScanRevision(valor) {
   const es7  = /^\d{7}$/.test(codigo);
 
   if (!es18 && !es7) {
+    playSound('error');
     showToast('error', 'Se produjo un error', 'Formato no reconocido. Se esperan 18 dígitos (etiqueta) o 7 dígitos (código).');
     if (input) { input.value = ''; }
     return;
