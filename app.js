@@ -4,6 +4,7 @@
 const PEDIDO = {
   id: '123456',
   articulos: [
+    { sku: '1394000', nombre: 'CINTA AISLANTE NEGRO 60 PLASTICA VERZE 20 U/L',                        cantPedido: 10, cantRevisada: 0, estado: 'pendiente', ubicacion: 'N/A',          pasillo: 'N/A',        torre: 'N/A',     nivel: 'N/A',     existencia: 999, esMiscelaneo: true  },
     { sku: '2546000', nombre: 'INTERRUPTOR LLAVE 11 TIPO UNIVERSAL CAMIONES 60-79 POLLAK 31',          cantPedido:  5, cantRevisada: 0, estado: 'pendiente', ubicacion: 'Planta Baja', pasillo: 'Pasillo 2',  torre: 'Torre 1', nivel: 'Nivel 2', existencia: 50,  esMiscelaneo: false },
     { sku: '1964000', nombre: 'FOCO HALOGENO H4/9003 TRANSPARENTE 12V 100/90 1 P43',                   cantPedido:  2, cantRevisada: 0, estado: 'pendiente', ubicacion: 'Planta Baja', pasillo: 'Pasillo 12', torre: 'Torre 4', nivel: 'Nivel 1', existencia: 60,  esMiscelaneo: false },
     { sku: '2655000', nombre: 'LIMPIADOR CARBURADOR Y CUERPO DE ACELERACION EN AEROSOL',               cantPedido:  1, cantRevisada: 0, estado: 'pendiente', ubicacion: 'Planta Baja', pasillo: 'Pasillo 4',  torre: 'Torre 5', nivel: 'Nivel 1', existencia: 90,  esMiscelaneo: true  },
