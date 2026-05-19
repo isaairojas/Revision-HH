@@ -1560,6 +1560,10 @@ html, body {
 .tabla-articulos tbody tr:last-child { border-bottom: none; }
 .tabla-articulos tbody tr:active,
 .tabla-articulos tbody tr:hover { background: #e8eaf6; }
+.tabla-articulos tbody tr.fila-destacada {
+  background: rgba(27, 56, 146, 0.10);
+  transition: background 0.3s ease;
+}
 
 .tabla-articulos td {
   padding: 10px 6px;

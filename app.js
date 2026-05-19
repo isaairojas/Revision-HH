@@ -175,21 +175,18 @@ function procesarScanRevision(valor) {
   art.cantRevisada += cantidadEtiqueta;
   if (art.cantRevisada > art.cantPedido) {
     art.estado = 'sobrante';
-    const exceso = art.cantRevisada - art.cantPedido;
-    showToast('warning', 'Sobrante detectado', 'Artículo ' + codigoProducto + ': ' + art.cantRevisada + ' escaneados, pedido requiere ' + art.cantPedido + ' (sobrante: +' + exceso + ').');
   } else if (art.cantRevisada === art.cantPedido) {
     art.estado = 'completo';
     playAudio('audio-ok');
-    showToast('success', 'Acción realizada', 'Artículo ' + codigoProducto + ' completado (' + art.cantRevisada + '/' + art.cantPedido + ').');
   } else {
     art.estado = 'parcial';
     playAudio('audio-ok');
-    showToast('warning', 'Alerta importante', 'Artículo ' + codigoProducto + ': ' + art.cantRevisada + ' de ' + art.cantPedido + ' revisados.');
   }
 
   if (input) { input.value = ''; resetInputMode(); setTimeout(() => input.focus(), 50); }
   renderTablaArticulos();
   actualizarStats();
+  destacarFila(codigoProducto);
 }
 
 /* ============================================================
@@ -246,6 +243,7 @@ function renderTablaArticulos() {
   tbody.innerHTML = '';
   PEDIDO.articulos.forEach((art, idx) => {
     const tr = document.createElement('tr');
+    tr.dataset.sku = art.sku;
     tr.onclick = () => abrirDetalleProducto(idx);
 
     const tdImg = document.createElement('td');
@@ -887,6 +885,19 @@ function confirmarSinDisc() {
   setEl('res-negados',     negado);
   setEl('res-sobrantes',   0);
   goTo('screen-resumen');
+}
+
+/* ============================================================
+   HIGHLIGHT DE FILA — feedback visual al escanear producto válido
+   ============================================================ */
+function destacarFila(sku) {
+  // Esperar a que renderTablaArticulos termine
+  requestAnimationFrame(() => {
+    const tr = document.querySelector('#articulos-tbody tr[data-sku="' + sku + '"]');
+    if (!tr) return;
+    tr.classList.add('fila-destacada');
+    setTimeout(() => tr.classList.remove('fila-destacada'), 2000);
+  });
 }
 
 /* ============================================================
