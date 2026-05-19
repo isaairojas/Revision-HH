@@ -23,43 +23,69 @@ let discResueltasCount = 0;
 let totalDiscrepancias = 0;
 
 /* ============================================================
-   SISTEMA DE AUDIO — Web Audio API
-   Funciona en Android/Zebra HH sin bloqueos por autoplay policy
+   SISTEMA DE AUDIO — Web Audio API + fallback HTML
+   Robusto para Android/Zebra HID: listeners persistentes,
+   resume en cada gesto, fallback a <audio> si falla Web Audio.
    ============================================================ */
-const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+const audioCtx     = new (window.AudioContext || window.webkitAudioContext)();
 const audioBuffers = {};
 
+// SIN { once:true } — siempre activo para re-reanudar si se suspende
 function unlockAudio() {
-  if (audioCtx.state === 'suspended') audioCtx.resume();
+  if (audioCtx.state === 'suspended') {
+    audioCtx.resume().catch(() => {});
+  }
 }
-document.addEventListener('touchstart', unlockAudio, { once: true });
-document.addEventListener('touchend',   unlockAudio, { once: true });
-document.addEventListener('keydown',    unlockAudio, { once: true });
-document.addEventListener('click',      unlockAudio, { once: true });
+document.addEventListener('touchstart', unlockAudio, { passive: true });
+document.addEventListener('touchend',   unlockAudio, { passive: true });
+document.addEventListener('keydown',    unlockAudio, { passive: true });
+document.addEventListener('click',      unlockAudio, { passive: true });
 
 async function loadSound(key, url) {
   try {
     const res = await fetch(url);
     const arr = await res.arrayBuffer();
     audioBuffers[key] = await audioCtx.decodeAudioData(arr);
+    console.log('[Audio] Cargado OK:', key);
   } catch (e) {
-    console.warn('Audio [' + key + '] no cargó:', e);
+    console.warn('[Audio] Error al cargar ' + key + ':', e);
   }
 }
 
-function playSound(key) {
+function _playWebAudio(key) {
   const buf = audioBuffers[key];
-  if (!buf) return;
-  const play = () => {
+  if (!buf) return false;
+  try {
     const src = audioCtx.createBufferSource();
     src.buffer = buf;
     src.connect(audioCtx.destination);
     src.start(0);
+    return true;
+  } catch (e) {
+    console.warn('[Audio] Web Audio falló:', e);
+    return false;
+  }
+}
+
+function _playFallback(key) {
+  // Fallback: elemento <audio> HTML
+  const id = 'audio-' + key;
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.currentTime = 0;
+  el.play().catch(e => console.warn('[Audio] Fallback falló:', e));
+}
+
+function playSound(key) {
+  const disparar = () => {
+    const ok = _playWebAudio(key);
+    if (!ok) _playFallback(key);  // siempre intentar fallback si Web Audio falla
   };
+
   if (audioCtx.state === 'suspended') {
-    audioCtx.resume().then(play);
+    audioCtx.resume().then(disparar).catch(() => _playFallback(key));
   } else {
-    play();
+    disparar();
   }
 }
 
