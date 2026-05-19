@@ -163,6 +163,14 @@ function procesarScanRevision(valor) {
     // 18 dígitos misc → acumular igual que producto normal (continúa abajo)
   }
 
+  // Producto normal con 7 dígitos → indicar que debe escanear la etiqueta
+  if (es7 && !art.esMiscelaneo) {
+    playAudio('audio-error');
+    showToast('warning', 'Escanea la etiqueta', 'El producto ' + codigoProducto + ' no es misceláneo. Por favor escanea la etiqueta de 18 dígitos del producto.');
+    if (input) { input.value = ''; resetInputMode(); setTimeout(() => input.focus(), 50); }
+    return;
+  }
+
   // Sumar cantidad escaneada (sin tope — permite sobrante)
   art.cantRevisada += cantidadEtiqueta;
   if (art.cantRevisada > art.cantPedido) {
@@ -296,21 +304,40 @@ function abrirDetalleProducto(idx) {
     };
   }
 
-  const secCantidad  = document.getElementById('det-section-cantidad');
-  const footerNormal = document.getElementById('det-footer-normal');
-  const footerMisc   = document.getElementById('det-footer-misc');
+  const secCantidad       = document.getElementById('det-section-cantidad');
+  const footerNormal      = document.getElementById('det-footer-normal');
+  const footerMisc        = document.getElementById('det-footer-misc');
+  const footerMiscRevisado = document.getElementById('det-footer-misc-revisado');
 
   if (art.esMiscelaneo) {
-    // Stepper siempre arranca en cantPedido (cantidad surtida)
-    document.getElementById('det-cantidad-val-btn').textContent = art.cantPedido;
-    document.getElementById('det-btn-cantidad').textContent     = art.cantPedido;
+    const yaRevisado = art.estado !== 'pendiente' && art.cantRevisada > 0;
+
+    // Mostrar cantidad actual en el stepper
+    const valMostrar = yaRevisado ? art.cantRevisada : art.cantPedido;
+    document.getElementById('det-cantidad-val-btn').textContent = valMostrar;
+    document.getElementById('det-btn-cantidad').textContent     = valMostrar;
+
+    // Bloquear/desbloquear stepper
+    ['stepper-btn minus', 'stepper-btn plus', 'stepper-val-btn'].forEach(cls => {
+      const el = document.querySelector('.' + cls.split(' ').join('.'));
+      if (el) el.disabled = yaRevisado;
+    });
+
     secCantidad.classList.remove('hidden');
     footerNormal.classList.add('hidden');
-    footerMisc.classList.remove('hidden');
+
+    if (yaRevisado) {
+      footerMisc.classList.add('hidden');
+      footerMiscRevisado.classList.remove('hidden');
+    } else {
+      footerMisc.classList.remove('hidden');
+      footerMiscRevisado.classList.add('hidden');
+    }
   } else {
     secCantidad.classList.add('hidden');
     footerNormal.classList.remove('hidden');
     footerMisc.classList.add('hidden');
+    footerMiscRevisado.classList.add('hidden');
   }
 
   goTo('screen-detalle');
@@ -368,6 +395,21 @@ function confirmarModalCantidad() {
     if (btnCant) btnCant.textContent = val;
   }
   cerrarModalCantidadBtn();
+}
+
+/* ============================================================
+   CANCELAR REVISIÓN MISCELÁNEO
+   ============================================================ */
+function cancelarRevisionMisc() {
+  if (articuloActualIdx >= 0) {
+    const art = PEDIDO.articulos[articuloActualIdx];
+    art.cantRevisada = 0;
+    art.estado = 'pendiente';
+    renderTablaArticulos();
+    actualizarStats();
+    showToast('warning', 'Revisión cancelada', 'Se reinició la revisión de ' + art.sku + '. Puedes volver a registrarla.');
+  }
+  goTo('screen-revision');
 }
 
 /* ============================================================

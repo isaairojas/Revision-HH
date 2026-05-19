@@ -102,6 +102,8 @@ html, body {
   border: none;
   cursor: pointer;
   display: flex;
+  min-width: 44px;
+  min-height: 44px;
   align-items: center;
   gap: 6px;
   color: #fff;
@@ -118,6 +120,7 @@ html, body {
   top: 50%;
   transform: translate(-50%, -50%);
   opacity: 0.25;
+  pointer-events: none;  /* No interceptar toques sobre los botones */
 }
 
 /* Botón 3 puntos */
@@ -1776,6 +1779,22 @@ html, body {
 }
 .btn-detalle-regresar:active,
 .btn-detalle-negar:active { filter: brightness(0.9); }
+.btn-cancelar-revision {
+  flex: 1;
+  background: #b71c1c;
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  padding: 14px 20px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.btn-cancelar-revision:active { filter: brightness(0.9); }
 .btn-revisar-producto {
   flex: 1;
   background: linear-gradient(135deg, #1B6B3A 0%, #27a85a 100%);
@@ -1892,6 +1911,12 @@ html, body {
 .stepper-val-btn:active {
   background: #e8eaf6;
   border-color: #1B3892;
+}
+.stepper-btn:disabled,
+.stepper-val-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  filter: none;
 }
 
 /* ============================================================
