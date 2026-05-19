@@ -1545,7 +1545,8 @@ html, body {
 }
 .col-img   { width: 50px; }
 .col-sku   { text-align: left; padding-left: 8px !important; }
-.col-cant-ped { width: 56px; }
+.col-cant-ped { width: 52px; }
+.col-cant-sur { width: 52px; }
 .col-cant-rev { width: 66px; }
 
 .tabla-articulos tbody tr {
@@ -1820,6 +1821,11 @@ html, body {
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  transition: background 0.2s;
+}
+.scan-bar-keyboard-btn.keyboard-active {
+  background: #e65100;
+  box-shadow: 0 0 0 3px rgba(230,81,0,0.35);
 }
 
 .scan-bar-input {

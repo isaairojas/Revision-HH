@@ -4,7 +4,10 @@
 const PEDIDO = {
   id: '123456',
   articulos: [
-{ sku: '1964000', nombre: 'FOCO HALOGENO H4/9003 TRANSPARENTE 12V 100/90 1 P43',                   cantPedido:  2, cantRevisada: 0, estado: 'pendiente', ubicacion: 'Planta Baja', pasillo: 'Pasillo 12', torre: 'Torre 4', nivel: 'Nivel 1', existencia: 60,  esMiscelaneo: false },
+    { sku: '1394000', nombre: 'CINTA AISLANTE NEGRO 60 PLASTICA VERZE 20 U/L',                        cantPedido: 10, cantRevisada: 0, estado: 'pendiente', ubicacion: 'Planta Baja', pasillo: 'Pasillo 1',  torre: 'Torre 1', nivel: 'Nivel 1', existencia: 100, esMiscelaneo: false },
+    { sku: '2546000', nombre: 'INTERRUPTOR LLAVE 11 TIPO UNIVERSAL CAMIONES 60-79 POLLAK 31',          cantPedido:  5, cantRevisada: 0, estado: 'pendiente', ubicacion: 'Planta Baja', pasillo: 'Pasillo 2',  torre: 'Torre 1', nivel: 'Nivel 2', existencia: 50,  esMiscelaneo: false },
+    { sku: '3658201', nombre: 'SOLENOIDE MARCHA DELCO 29MT 12V (10515838) BRASIL',                     cantPedido:  2, cantRevisada: 0, estado: 'pendiente', ubicacion: 'Planta Baja', pasillo: 'Pasillo 3',  torre: 'Torre 2', nivel: 'Nivel 1', existencia: 20,  esMiscelaneo: false },
+    { sku: '1964000', nombre: 'FOCO HALOGENO H4/9003 TRANSPARENTE 12V 100/90 1 P43',                   cantPedido:  2, cantRevisada: 0, estado: 'pendiente', ubicacion: 'Planta Baja', pasillo: 'Pasillo 12', torre: 'Torre 4', nivel: 'Nivel 1', existencia: 60,  esMiscelaneo: false },
     { sku: '2655000', nombre: 'LIMPIADOR CARBURADOR Y CUERPO DE ACELERACION EN AEROSOL',               cantPedido:  1, cantRevisada: 0, estado: 'pendiente', ubicacion: 'Planta Baja', pasillo: 'Pasillo 4',  torre: 'Torre 5', nivel: 'Nivel 1', existencia: 90,  esMiscelaneo: false },
     { sku: '4105000', nombre: 'TERMINAL INSTALACION REDONDA ZINC ROJO 5/32 IMPORTADO R-5/32"',         cantPedido:  2, cantRevisada: 0, estado: 'pendiente', ubicacion: 'N/A',          pasillo: 'N/A',        torre: 'N/A',     nivel: 'N/A',     existencia: 999, esMiscelaneo: true  }
   ]
@@ -53,6 +56,34 @@ function playAudio(id) {
 }
 
 /* ============================================================
+   TECLADO VIRTUAL — toggle para ingreso manual (misceláneos)
+   ============================================================ */
+function toggleKeyboard() {
+  const input = document.getElementById('scanner-revision');
+  const btn   = document.getElementById('btn-keyboard-toggle');
+  if (!input) return;
+  const activo = input.inputMode !== 'none';
+  if (activo) {
+    // Desactivar teclado
+    input.inputMode = 'none';
+    if (btn) btn.classList.remove('keyboard-active');
+    input.focus();
+  } else {
+    // Activar teclado
+    input.inputMode = 'text';
+    if (btn) btn.classList.add('keyboard-active');
+    input.focus();
+  }
+}
+
+function resetInputMode() {
+  const input = document.getElementById('scanner-revision');
+  const btn   = document.getElementById('btn-keyboard-toggle');
+  if (input) input.inputMode = 'none';
+  if (btn)   btn.classList.remove('keyboard-active');
+}
+
+/* ============================================================
    ESCANEO EN PANTALLA DE REVISIÓN (etiqueta 18 dígitos)
    Estructura: Producto(1-7) | Cantidad(8-13) | Peso(14-18)
    ============================================================ */
@@ -95,12 +126,15 @@ function procesarScanRevision(valor) {
     return;
   }
 
-  // Artículo misceláneo: indicar al usuario que use el detalle
+  // Artículo misceláneo
   if (art.esMiscelaneo) {
-    playAudio('audio-error');
-    if (input) { input.value = ''; setTimeout(() => input.focus(), 50); }
-    showToast('warning', 'Misceláneo detectado', 'Para registrar la cantidad de "' + art.nombre + '" hazlo desde el detalle del producto.');
-    return;
+    if (es7) {
+      // 7 dígitos (escaneado o teclado) → abrir detalle para confirmar cantidad
+      if (input) { input.value = ''; resetInputMode(); }
+      abrirDetalleProducto(PEDIDO.articulos.indexOf(art));
+      return;
+    }
+    // 18 dígitos misc → acumular igual que producto normal (continúa abajo)
   }
 
   // Sumar cantidad escaneada (sin tope — permite sobrante)
@@ -119,7 +153,7 @@ function procesarScanRevision(valor) {
     showToast('warning', 'Alerta importante', 'Artículo ' + codigoProducto + ': ' + art.cantRevisada + ' de ' + art.cantPedido + ' revisados.');
   }
 
-  if (input) { input.value = ''; setTimeout(() => input.focus(), 50); }
+  if (input) { input.value = ''; resetInputMode(); setTimeout(() => input.focus(), 50); }
   renderTablaArticulos();
   actualizarStats();
 }
@@ -191,6 +225,9 @@ function renderTablaArticulos() {
     const tdPed = document.createElement('td');
     tdPed.innerHTML = '<strong>' + art.cantPedido + '</strong>';
 
+    const tdSur = document.createElement('td');
+    tdSur.innerHTML = '<strong>' + art.cantPedido + '</strong>';
+
     const tdRev = document.createElement('td');
     let badgeClass = 'badge-rev';
     let badgeText = art.cantRevisada + ' de ' + art.cantPedido;
@@ -202,6 +239,7 @@ function renderTablaArticulos() {
     tr.appendChild(tdImg);
     tr.appendChild(tdSku);
     tr.appendChild(tdPed);
+    tr.appendChild(tdSur);
     tr.appendChild(tdRev);
     tbody.appendChild(tr);
   });
