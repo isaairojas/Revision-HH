@@ -2078,9 +2078,10 @@ html, body {
 }
 .disc-tarjeta-top {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 0;
   flex-wrap: nowrap;
+  margin-bottom: 10px;
 }
 .disc-tarjeta-info {
   flex: 1;
@@ -2113,6 +2114,26 @@ html, body {
 .disc-separador {
   border-top: 1px solid #f0f0f0;
 }
+/* Fila de cantidades separada de la foto/info */
+.disc-cantidades-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 0;
+  background: #f7f8fc;
+  border-radius: 10px;
+  padding: 10px 12px;
+  margin-bottom: 12px;
+}
+.disc-cantidades-row .disc-cant-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+.disc-cant-diff-item {
+  border-left: 1px solid #e0e0e0;
+}
 .disc-cant-label {
   font-size: 10px;
   color: #999;
@@ -2120,9 +2141,15 @@ html, body {
   letter-spacing: 0.3px;
 }
 .disc-cant-val {
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 800;
   color: #1a1a2e;
+}
+/* Diferencia con tamaño destacado */
+.disc-val-big {
+  font-size: 22px;
+  font-weight: 900;
+  line-height: 1;
 }
 .disc-tarjeta-info {
   flex: 1;

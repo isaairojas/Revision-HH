@@ -637,10 +637,19 @@ function crearTarjetaFaltante(art) {
         <span class="disc-codigo">${art.sku}</span>
         <span class="disc-nombre">${art.nombre}</span>
       </div>
-      <div class="disc-cantidades">
-        <div class="disc-cant-item"><span class="disc-cant-label">Solicitado</span><span class="disc-cant-val">${art.cantPedido}</span></div>
-        <div class="disc-cant-item"><span class="disc-cant-label">Revisado</span><span class="disc-cant-val disc-val-bajo">${art.cantRevisada}</span></div>
-        <div class="disc-cant-item"><span class="disc-cant-label">Diferencia</span><span class="disc-cant-val disc-val-diff">${art.diferencia}</span></div>
+    </div>
+    <div class="disc-cantidades-row">
+      <div class="disc-cant-item">
+        <span class="disc-cant-label">Surtido</span>
+        <span class="disc-cant-val">${art.cantPedido}</span>
+      </div>
+      <div class="disc-cant-item">
+        <span class="disc-cant-label">Revisado</span>
+        <span class="disc-cant-val disc-val-bajo">${art.cantRevisada}</span>
+      </div>
+      <div class="disc-cant-item disc-cant-diff-item">
+        <span class="disc-cant-label">Diferencia</span>
+        <span class="disc-cant-val disc-val-diff disc-val-big">${art.diferencia}</span>
       </div>
     </div>
     <div class="disc-accion-faltante">
@@ -709,10 +718,19 @@ function crearTarjetaSobrante(art) {
         <span class="disc-codigo">${art.sku}</span>
         <span class="disc-nombre">${art.nombre}</span>
       </div>
-      <div class="disc-cantidades">
-        <div class="disc-cant-item"><span class="disc-cant-label">Solicitado</span><span class="disc-cant-val">${art.cantPedido}</span></div>
-        <div class="disc-cant-item"><span class="disc-cant-label">Revisado</span><span class="disc-cant-val disc-val-alto">${art.cantRevisada}</span></div>
-        <div class="disc-cant-item"><span class="disc-cant-label">Diferencia</span><span class="disc-cant-val disc-val-diff-pos">+${art.diferencia}</span></div>
+    </div>
+    <div class="disc-cantidades-row">
+      <div class="disc-cant-item">
+        <span class="disc-cant-label">Surtido</span>
+        <span class="disc-cant-val">${art.cantPedido}</span>
+      </div>
+      <div class="disc-cant-item">
+        <span class="disc-cant-label">Revisado</span>
+        <span class="disc-cant-val disc-val-alto">${art.cantRevisada}</span>
+      </div>
+      <div class="disc-cant-item disc-cant-diff-item">
+        <span class="disc-cant-label">Diferencia</span>
+        <span class="disc-cant-val disc-val-diff-pos disc-val-big">+${art.diferencia}</span>
       </div>
     </div>
     <div class="disc-accion-sobrante">
