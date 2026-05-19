@@ -619,6 +619,12 @@ function construirPantallaDiscrepancias(disc) {
 /* ============================================================
    CREAR TARJETA DE FALTANTE
    ============================================================ */
+function _imgHtml(sku) {
+  return `<img src="assets/${sku}.jpg" style="width:100%;height:100%;object-fit:contain;border-radius:6px"
+         onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" />
+         <svg style="display:none;align-items:center;justify-content:center;width:100%;height:100%" viewBox="0 0 24 24" fill="#c5cae9"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>`;
+}
+
 function crearTarjetaFaltante(art) {
   const id = 'disc-faltante-' + art.sku;
   const div = document.createElement('div');
@@ -626,9 +632,7 @@ function crearTarjetaFaltante(art) {
   div.id = id;
   div.innerHTML = `
     <div class="disc-tarjeta-top">
-      <div class="disc-foto-producto">
-        <svg width="40" height="40" viewBox="0 0 24 24" fill="#c5cae9"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>
-      </div>
+      <div class="disc-foto-producto">${_imgHtml(art.sku)}</div>
       <div class="disc-tarjeta-info">
         <span class="disc-codigo">${art.sku}</span>
         <span class="disc-nombre">${art.nombre}</span>
@@ -663,9 +667,7 @@ function crearTarjetaAjeno(prod) {
   div.id = id;
   div.innerHTML = `
     <div class="disc-tarjeta-top">
-      <div class="disc-foto-producto">
-        <svg width="40" height="40" viewBox="0 0 24 24" fill="#c5cae9"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>
-      </div>
+      <div class="disc-foto-producto">${_imgHtml(prod.sku)}</div>
       <div class="disc-tarjeta-info">
         <span class="disc-codigo">${prod.sku}</span>
         <span class="disc-nombre">${prod.nombre}</span>
@@ -702,9 +704,7 @@ function crearTarjetaSobrante(art) {
   div.id = id;
   div.innerHTML = `
     <div class="disc-tarjeta-top">
-      <div class="disc-foto-producto">
-        <svg width="40" height="40" viewBox="0 0 24 24" fill="#c5cae9"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>
-      </div>
+      <div class="disc-foto-producto">${_imgHtml(art.sku)}</div>
       <div class="disc-tarjeta-info">
         <span class="disc-codigo">${art.sku}</span>
         <span class="disc-nombre">${art.nombre}</span>
