@@ -24,69 +24,48 @@ let discResueltasCount = 0;
 let totalDiscrepancias = 0;
 
 /* ============================================================
-   AUDIO — Web Audio API (confiable en Android/Chrome + Zebra HID)
+   SISTEMA DE AUDIO — Web Audio API
+   Funciona en Android/Zebra HH sin bloqueos por autoplay policy
    ============================================================ */
-let _audioCtx    = null;
-const _audioBufs = {};   // { ok: AudioBuffer, error: AudioBuffer }
-let _audioReady  = false;
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+const audioBuffers = {};
 
-async function _cargarAudio() {
+function unlockAudio() {
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+}
+document.addEventListener('touchstart', unlockAudio, { once: true });
+document.addEventListener('touchend',   unlockAudio, { once: true });
+document.addEventListener('keydown',    unlockAudio, { once: true });
+document.addEventListener('click',      unlockAudio, { once: true });
+
+async function loadSound(key, url) {
   try {
-    _audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    // El contexto arranca suspended — se reanuda con el primer gesto del usuario
-    const archivos = { ok: 'beep-ok.mp3', error: 'beep-error.mp3' };
-    for (const [key, src] of Object.entries(archivos)) {
-      const resp      = await fetch(src);
-      const arrayBuf  = await resp.arrayBuffer();
-      _audioBufs[key] = await _audioCtx.decodeAudioData(arrayBuf);
-    }
-    _audioReady = true;
+    const res = await fetch(url);
+    const arr = await res.arrayBuffer();
+    audioBuffers[key] = await audioCtx.decodeAudioData(arr);
   } catch (e) {
-    console.warn('[Audio] Web Audio API no disponible, usando fallback HTML:', e);
+    console.warn('Audio [' + key + '] no cargó:', e);
   }
 }
 
-// Iniciar carga de buffers al arrancar — listo antes del primer scan
-document.addEventListener('DOMContentLoaded', () => _cargarAudio());
-
-function _resumirContexto() {
-  // Reanudar contexto suspendido con cualquier gesto (toque, click o tecla HID)
-  if (_audioCtx && _audioCtx.state === 'suspended') {
-    _audioCtx.resume();
+function playSound(key) {
+  const buf = audioBuffers[key];
+  if (!buf) return;
+  const play = () => {
+    const src = audioCtx.createBufferSource();
+    src.buffer = buf;
+    src.connect(audioCtx.destination);
+    src.start(0);
+  };
+  if (audioCtx.state === 'suspended') {
+    audioCtx.resume().then(play);
+  } else {
+    play();
   }
 }
 
-// Capturar gestos del usuario para desbloquear el contexto de audio
-['touchstart', 'mousedown', 'keydown'].forEach(ev =>
-  document.addEventListener(ev, _resumirContexto, { passive: true })
-);
-
-function playAudio(id) {
-  const key = id.replace('audio-', ''); // 'ok' | 'error'
-
-  // --- Web Audio API (preferido) ---
-  if (_audioReady && _audioCtx && _audioBufs[key]) {
-    const _disparar = () => {
-      const src = _audioCtx.createBufferSource();
-      src.buffer = _audioBufs[key];
-      src.connect(_audioCtx.destination);
-      src.start(0);
-    };
-    // resume() es async — esperar antes de disparar el sonido
-    if (_audioCtx.state === 'suspended') {
-      _audioCtx.resume().then(_disparar).catch(() => {});
-    } else {
-      _disparar();
-    }
-    return;
-  }
-
-  // --- Fallback: elemento <audio> HTML ---
-  const el = document.getElementById(id);
-  if (!el) return;
-  el.currentTime = 0;
-  el.play().catch(() => {});
-}
+loadSound('ok',    'beep-ok.mp3');
+loadSound('error', 'beep-error.mp3');
 
 /* ============================================================
    TECLADO VIRTUAL — toggle para ingreso manual (misceláneos)
@@ -153,7 +132,7 @@ function procesarScanRevision(valor) {
     } else {
       productosAjenos.push({ sku: codigoProducto, cantidad: cantidadEtiqueta, nombre: 'PRODUCTO AJENO AL PEDIDO' });
     }
-    playAudio('audio-error');
+    playSound('error');
     showToast('error', 'Se produjo un error', 'El código ' + codigoProducto + ' no corresponde a ningún artículo de este pedido.');
     if (input) { input.value = ''; setTimeout(() => input.focus(), 50); }
     return;
@@ -172,7 +151,7 @@ function procesarScanRevision(valor) {
 
   // Producto normal con 7 dígitos → indicar que debe escanear la etiqueta
   if (es7 && !art.esMiscelaneo) {
-    playAudio('audio-error');
+    playSound('error');
     showToast('warning', 'Escanea la etiqueta', 'El producto ' + codigoProducto + ' no es misceláneo. Por favor escanea la etiqueta de 18 dígitos del producto.');
     if (input) { input.value = ''; resetInputMode(); setTimeout(() => input.focus(), 50); }
     return;
@@ -182,13 +161,13 @@ function procesarScanRevision(valor) {
   art.cantRevisada += cantidadEtiqueta;
   if (art.cantRevisada > art.cantPedido) {
     art.estado = 'sobrante';
-    playAudio('audio-error');
+    playSound('error');
   } else if (art.cantRevisada === art.cantPedido) {
     art.estado = 'completo';
-    playAudio('audio-ok');
+    playSound('ok');
   } else {
     art.estado = 'parcial';
-    playAudio('audio-ok');
+    playSound('ok');
   }
 
   if (input) { input.value = ''; resetInputMode(); setTimeout(() => input.focus(), 50); }
